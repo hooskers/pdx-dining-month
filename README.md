@@ -23,7 +23,10 @@ Query used to scrape the info:
       tags: select(elem: ".restaurant-info > p") {
         text
       }
-      address: select(elem: ".restaurant-info > .meta .phone") {
+      address: select(elem: ".restaurant-info > .meta address") {
+        text
+      }
+      phone: select(elem: ".restaurant-info > .meta .phone") {
         text
       }
       description:select(elem: ".restaurant-header ~ .row .content > p") {
@@ -41,6 +44,7 @@ Query used to scrape the info:
     }
   }
 }
+
 ```
 
 Got the coordinates from the restaurant's addresses from [OpenStreetMap's Nominatim API](https://nominatim.openstreetmap.org/).
