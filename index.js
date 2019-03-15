@@ -1,13 +1,42 @@
 /** @jsx jsx */
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import { jsx, css } from '@emotion/core';
 
-import data from './src/data/restaurantData.json'
+import data from './src/data/restaurantData.json';
 
-const style = css`
-  color: black;
+import Card from '@material-ui/core/Card';
+import CardMedia from '@material-ui/core/CardMedia';
+import CardContent from '@material-ui/core/CardContent';
+import { CardHeader } from '@material-ui/core';
+import AppBar from '@material-ui/core/AppBar';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+
+const cardMediaStyles = css`
+  height: 200px;
+  background-size: cover;
+  background-position: center center;
 `;
+
+const cardContentStyles = css`
+  padding: 0px !important;
+`;
+
+const tabContainerStyles = css`
+  padding-left: 16px;
+  padding-right: 16px;
+  padding-top: 16px;
+  padding-bottom: 16px;
+`;
+
+const TabContainer = ({ children }) => (
+  <div css={tabContainerStyles}>{children}</div>
+);
 
 const gridStyles = css`
   display: grid;
@@ -44,21 +73,59 @@ const gridStyles = css`
   }
 `;
 
-const Restaurant = ({name, image, description, tags, firstCourse, secondCourse, thirdCourse}) => {
-  const [hovered, setHovered] = useState(false);
+const Restaurant = ({
+  name,
+  image,
+  description,
+  tags,
+  firstCourse,
+  secondCourse,
+  thirdCourse,
+}) => {
+  const [tabIndex, setTabIndex] = useState(0);
+
+  const handleChange = (event, value) => {
+    setTabIndex(value);
+  };
 
   return (
-    <div className="restaurant-item" key={name} onMouseOver={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
-      <div style={{backgroundImage: `url(${image})`}} />
-      <h2>{name}</h2>
-      <small>{tags.join(', ')}</small>
-      <span>{description}</span>
-      {hovered ? <div className="menu">
-        {firstCourse.map(course => <div className="course-item">{course}</div>)}
-      </div> : null}
-    </div>
-  )
-}
+    <Card>
+      <CardHeader title={name} />
+      <CardMedia image={image} css={cardMediaStyles} />
+      <CardContent css={cardContentStyles}>
+        <AppBar position="static">
+          <Tabs value={tabIndex} onChange={handleChange} scrollButtons="on">
+            <Tab label="Description" />
+            <Tab label="Menu" />
+          </Tabs>
+        </AppBar>
+        {tabIndex === 0 && <TabContainer>{description}</TabContainer>}
+        {tabIndex === 1 && (
+          <div>
+            <ExpansionPanel>
+              <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                First Course
+              </ExpansionPanelSummary>
+              <ExpansionPanelDetails>{firstCourse}</ExpansionPanelDetails>
+            </ExpansionPanel>
+            <ExpansionPanel>
+              <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                Second Course
+              </ExpansionPanelSummary>
+              <ExpansionPanelDetails>{secondCourse}</ExpansionPanelDetails>
+            </ExpansionPanel>
+            <ExpansionPanel>
+              <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                Third Course
+              </ExpansionPanelSummary>
+              <ExpansionPanelDetails>{thirdCourse}</ExpansionPanelDetails>
+            </ExpansionPanel>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+};
 
 const Grid = () => {
   return (
@@ -67,13 +134,12 @@ const Grid = () => {
         <Restaurant key={restaurant.name} {...restaurant} />
       ))}
     </div>
-  )
-}
+  );
+};
 
 const App = () => (
   <div className="App" css={style}>
     <Grid />
-    {/* <h1>Hi there!!!</h1> */}
   </div>
 );
 
